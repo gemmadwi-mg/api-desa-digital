@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\DevelopmentRepositoryInterface;
+use App\Models\Development;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use Exception;
@@ -15,7 +16,7 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
         ?int $limit,
         bool $execute
     ) {
-        $query = EventParticipant::where(function ($query) use ($search) {
+        $query = Development::where(function ($query) use ($search) {
             if($search) {
                 $query->search($search);
             }
@@ -61,19 +62,21 @@ class DevelopmentRepository implements DevelopmentRepositoryInterface
         DB::beginTransaction();
 
         try {
-            $event = Event::where('id', $data['event_id'])->first();
+            $development = new Development();
 
-            $eventParticipant = new EventParticipant();
-            $eventParticipant->event_id = $data['event_id'];
-            $eventParticipant->head_of_family_id = $data['head_of_family_id'];
-            $eventParticipant->quantity = $data['quantity'];
-            $eventParticipant->total_price = $event->price * $data['quantity'];
-            $eventParticipant->payment_status = "pending";
-            $eventParticipant->save();
+            $development->thumbnail = $data['thumbnail']->store('assets/developments', 'public');
+            $development->name = $data['name'];
+            $development->description = $data['description'];
+            $development->person_in_charge = $data['person_in_charge'];
+            $development->start_date = $data["start_date"];
+            $development->end_date = $data["end_date"];
+            $development->amount = $data["amount"];
+            $development->status = $data["status"];
+            $development->save();
 
             DB::commit();
 
-            return $eventParticipant;
+            return $development;
         } catch (\Exception $e) {
             DB::rollBack();
 
