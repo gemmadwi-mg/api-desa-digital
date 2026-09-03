@@ -30,7 +30,7 @@ class DevelopmentController extends Controller
                 true
             );
 
-            return ResponseHelper::jsonResponse(true, 'Data Event Berhasil Diambil', DevelopmentResource::collection($developments), 200);
+            return ResponseHelper::jsonResponse(true, 'Data Pembangunan Berhasil Diambil', DevelopmentResource::collection($developments), 200);
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
@@ -49,7 +49,7 @@ class DevelopmentController extends Controller
                 $request['row_per_page'],
             );
 
-            return ResponseHelper::jsonResponse(true, 'Data Event Berhasil Diambil', DevelopmentResource::make($developments, DevelopmentResource::class), 200);
+            return ResponseHelper::jsonResponse(true, 'Data Pembangunan Berhasil Diambil', DevelopmentResource::make($developments, DevelopmentResource::class), 200);
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
