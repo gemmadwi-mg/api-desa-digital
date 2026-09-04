@@ -17,7 +17,7 @@ class Profile extends Model
         'headman',
         'people',
         'agricultural_area',
-        'total-area',
+        'total_area',
     ];
 
     protected $casts = [
