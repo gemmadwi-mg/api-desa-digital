@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Interfaces\DevelopmentApplicantRepositoryInterface;
-use App\Models\Development;
 use App\Models\DevelopmentApplicant;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -16,18 +15,18 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
         bool $execute
     ) {
         $query = DevelopmentApplicant::where(function ($query) use ($search) {
-            if($search) {
+            if ($search) {
                 $query->search($search);
             }
         });
 
         $query->orderBy('created_at', 'desc');
 
-        if($limit) {
+        if ($limit) {
             $query->take($limit);
         }
 
-        if($execute) {
+        if ($execute) {
             return $query->get();
         }
 
@@ -50,7 +49,7 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
     public function getById(
         string $id
     ) {
-        $query = Development::where('id', $id);
+        $query = DevelopmentApplicant::where('id', $id);
 
         return $query->first();
     }
@@ -61,21 +60,19 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
         DB::beginTransaction();
 
         try {
-            $development = new Development();
+            $developmentApplicant = new DevelopmentApplicant;
+            $developmentApplicant->development_id = $data['development_id'];
+            $developmentApplicant->user_id = $data['user_id'];
 
-            $development->thumbnail = $data['thumbnail']->store('assets/developments', 'public');
-            $development->name = $data['name'];
-            $development->description = $data['description'];
-            $development->person_in_charge = $data['person_in_charge'];
-            $development->start_date = $data["start_date"];
-            $development->end_date = $data["end_date"];
-            $development->amount = $data["amount"];
-            $development->status = $data["status"];
-            $development->save();
+            if (!isset($data['status'])) {
+                $developmentApplicant->status = $data['status'];
+            }
+
+            $developmentApplicant->save();
 
             DB::commit();
 
-            return $development;
+            return $developmentApplicant;
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -90,25 +87,19 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
         DB::beginTransaction();
 
         try {
-            $development = Development::find($id);
+            $developmentApplicant = DevelopmentApplicant::find($id);
+            $developmentApplicant->development_id = $data['development_id'];
+            $developmentApplicant->user_id = $data['user_id'];
 
-            if (isset($data['thumbnail'])) {
-                $development->thumbnail = $data['thumbnail']->store('assets/developments', 'public');
-            } 
+            if (!isset($data['status'])) {
+                $developmentApplicant->status = $data['status'];
+            }
 
-            $development->name = $data['name'];
-            $development->description = $data['description'];
-            $development->person_in_charge = $data['person_in_charge'];
-            $development->start_date = $data["start_date"];
-            $development->end_date = $data["end_date"];
-            $development->amount = $data["amount"];
-            $development->status = $data["status"];
-
-            $development->save();
+            $developmentApplicant->save();
 
             DB::commit();
 
-            return $development;
+            return $developmentApplicant;
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -122,12 +113,12 @@ class DevelopmentApplicantRepository implements DevelopmentApplicantRepositoryIn
         DB::beginTransaction();
 
         try {
-            $development = Development::find($id);
-            $development->delete();
+            $developmentApplicant = DevelopmentApplicant::find($id);
+            $developmentApplicant->delete();
 
             DB::commit();
 
-            return $development;
+            return $developmentApplicant;
         } catch (\Exception $e) {
             DB::rollBack();
 
