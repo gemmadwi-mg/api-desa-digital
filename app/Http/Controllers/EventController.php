@@ -13,23 +13,24 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class EventController extends Controller
+class EventController extends Controller implements HasMiddleware
 {
     private EventRepositoryInterface $eventRepository;
 
-    public function __construct(EventRepositoryInterface $eventRepository) {
+    public function __construct(EventRepositoryInterface $eventRepository)
+    {
         $this->eventRepository = $eventRepository;
     }
 
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware(PermissionMiddleware::using(['event-list|event-create|event-edit|event-delete']), only: ['index', 'getAllPaginated', 'show']),
-    //         new Middleware(PermissionMiddleware::using(['event-create']), only: ['store']),
-    //         new Middleware(PermissionMiddleware::using(['event-edit']), only: ['update']),
-    //         new Middleware(PermissionMiddleware::using(['event-delete']), only: ['destroy']),
-    //     ];
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['event-list|event-create|event-edit|event-delete']), only: ['index', 'getAllPaginated', 'show']),
+            new Middleware(PermissionMiddleware::using(['event-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['event-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['event-delete']), only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -66,7 +67,6 @@ class EventController extends Controller
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
-
     }
 
     /**
@@ -95,7 +95,7 @@ class EventController extends Controller
         try {
             $event = $this->eventRepository->getById($id);
 
-            if(!$event){
+            if (!$event) {
                 return ResponseHelper::jsonResponse(false, 'Data Event Tidak Ditemukan', null, 404);
             }
 
@@ -115,7 +115,7 @@ class EventController extends Controller
         try {
             $event = $this->eventRepository->getById($id);
 
-            if(!$event){
+            if (!$event) {
                 return ResponseHelper::jsonResponse(false, 'Data Event Tidak Ditemukan', null, 404);
             }
 
@@ -138,7 +138,7 @@ class EventController extends Controller
         try {
             $event = $this->eventRepository->getById($id);
 
-            if(!$event){
+            if (!$event) {
                 return ResponseHelper::jsonResponse(false, 'Data Event Tidak Ditemukan', null, 404);
             }
 

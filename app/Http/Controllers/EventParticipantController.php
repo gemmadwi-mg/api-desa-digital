@@ -13,23 +13,24 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class EventParticipantController extends Controller
+class EventParticipantController extends Controller implements HasMiddleware
 {
     private EventParticipantRepositoryInterface $eventParticipantRepository;
 
-    public function __construct(EventParticipantRepositoryInterface $eventParticipantRepository) {
+    public function __construct(EventParticipantRepositoryInterface $eventParticipantRepository)
+    {
         $this->eventParticipantRepository = $eventParticipantRepository;
     }
 
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware(PermissionMiddleware::using(['event-participant-list|event-participant-create|event-participant-edit|event-participant-delete']), only: ['index', 'getAllPaginated', 'show']),
-    //         new Middleware(PermissionMiddleware::using(['event-participant-create']), only: ['store']),
-    //         new Middleware(PermissionMiddleware::using(['event-participant-edit']), only: ['update']),
-    //         new Middleware(PermissionMiddleware::using(['event-participant-delete']), only: ['destroy']),
-    //     ];
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['event-participant-list|event-participant-create|event-participant-edit|event-participant-delete']), only: ['index', 'getAllPaginated', 'show']),
+            new Middleware(PermissionMiddleware::using(['event-participant-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['event-participant-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['event-participant-delete']), only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -66,7 +67,6 @@ class EventParticipantController extends Controller
         } catch (\Exception $e) {
             return ResponseHelper::jsonResponse(false, $e->getMessage(), null, 500);
         }
-
     }
 
     /**
@@ -93,7 +93,7 @@ class EventParticipantController extends Controller
         try {
             $eventParticipant = $this->eventParticipantRepository->getById($id);
 
-            if(!$eventParticipant){
+            if (!$eventParticipant) {
                 return ResponseHelper::jsonResponse(false, 'Data Pendaftar Event Tidak Ditemukan', null, 404);
             }
 
@@ -113,7 +113,7 @@ class EventParticipantController extends Controller
         try {
             $eventParticipant = $this->eventParticipantRepository->getById($id);
 
-            if(!$eventParticipant){
+            if (!$eventParticipant) {
                 return ResponseHelper::jsonResponse(false, 'Data Pendaftar Event Tidak Ditemukan', null, 404);
             }
 
@@ -133,7 +133,7 @@ class EventParticipantController extends Controller
         try {
             $eventParticipant = $this->eventParticipantRepository->getById($id);
 
-            if(!$eventParticipant){
+            if (!$eventParticipant) {
                 return ResponseHelper::jsonResponse(false, 'Data Pendaftar Event Tidak Ditemukan', null, 404);
             }
 

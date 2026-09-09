@@ -6,33 +6,32 @@ use App\Helpers\ResponseHelper;
 use App\Http\Requests\SocialAssistanceStoreRequest;
 use App\Http\Requests\SocialAssistanceUpdateRequest;
 use App\Http\Resources\PaginateResource;
-use App\Http\Resources\SocialAssistanceRecipientResource;
 use App\Http\Resources\SocialAssistanceResource;
 use App\Interfaces\SocialAssistanceRepositoryInterface;
-use App\Models\SocialAssistance;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 
-class SocialAssistanceController extends Controller
+class SocialAssistanceController extends Controller implements HasMiddleware
 {
 
     private SocialAssistanceRepositoryInterface $socialAssistanceRepository;
 
-    public function __construct(SocialAssistanceRepositoryInterface $socialAssistanceRepository) {
+    public function __construct(SocialAssistanceRepositoryInterface $socialAssistanceRepository)
+    {
         $this->socialAssistanceRepository = $socialAssistanceRepository;
     }
 
-    // public static function middleware()
-    // {
-    //     return [
-    //         new Middleware(PermissionMiddleware::using(['social-assistance-list|social-assistance-create|social-assistance-edit|social-assistance-delete']), only: ['index', 'getAllPaginated', 'show']),
-    //         new Middleware(PermissionMiddleware::using(['social-assistance-create']), only: ['store']),
-    //         new Middleware(PermissionMiddleware::using(['social-assistance-edit']), only: ['update']),
-    //         new Middleware(PermissionMiddleware::using(['social-assistance-delete']), only: ['destroy']),
-    //     ];
-    // }
+    public static function middleware()
+    {
+        return [
+            new Middleware(PermissionMiddleware::using(['social-assistance-list|social-assistance-create|social-assistance-edit|social-assistance-delete']), only: ['index', 'getAllPaginated', 'show']),
+            new Middleware(PermissionMiddleware::using(['social-assistance-create']), only: ['store']),
+            new Middleware(PermissionMiddleware::using(['social-assistance-edit']), only: ['update']),
+            new Middleware(PermissionMiddleware::using(['social-assistance-delete']), only: ['destroy']),
+        ];
+    }
 
     /**
      * Display a listing of the resource.
@@ -95,7 +94,7 @@ class SocialAssistanceController extends Controller
         try {
             $socialAssistance = $this->socialAssistanceRepository->getById($id);
 
-            if(!$socialAssistance){
+            if (!$socialAssistance) {
                 return ResponseHelper::jsonResponse(false, 'Data Bantuan Sosial Tidak Ditemukan', null, 404);
             }
 
@@ -115,7 +114,7 @@ class SocialAssistanceController extends Controller
         try {
             $socialAssistance = $this->socialAssistanceRepository->getById($id);
 
-            if(!$socialAssistance){
+            if (!$socialAssistance) {
                 return ResponseHelper::jsonResponse(false, 'Data Bantuan Sosial Tidak Ditemukan', null, 404);
             }
 
@@ -140,7 +139,7 @@ class SocialAssistanceController extends Controller
                 $id
             );
 
-            if(!$socialAssistance){
+            if (!$socialAssistance) {
                 return ResponseHelper::jsonResponse(false, 'Bantuan Sosial Tidak Ditemukan', null, 404);
             }
 
